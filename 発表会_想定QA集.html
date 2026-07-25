@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コトバまるく 発表会 想定Q&A集</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    min-height: 100vh;
+  }
+
+  header {
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 20px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1d1d1f;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  header h1 span {
+    color: #e8956d;
+  }
+
+  .search-wrap {
+    position: relative;
+    max-width: 520px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #999;
+    pointer-events: none;
+  }
+
+  #search {
+    width: 100%;
+    padding: 11px 40px 11px 40px;
+    font-size: 15px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    background: #fafafa;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+  }
+
+  #search:focus {
+    border-color: #e8956d;
+    box-shadow: 0 0 0 3px rgba(232,149,109,0.15);
+    background: #fff;
+  }
+
+  #clear-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 17px;
+    color: #aaa;
+    display: none;
+    padding: 2px;
+    line-height: 1;
+  }
+
+  #clear-btn:hover { color: #555; }
+
+  .filter-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .filter-btn {
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1.5px solid #ddd;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #555;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover { border-color: #e8956d; color: #e8956d; }
+
+  .filter-btn.active {
+    background: #e8956d;
+    border-color: #e8956d;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  main {
+    max-width: 820px;
+    margin: 28px auto;
+    padding: 0 24px 60px;
+  }
+
+  #result-count {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 16px;
+  }
+
+  #result-count span {
+    font-weight: 700;
+    color: #e8956d;
+  }
+
+  .category {
+    margin-bottom: 28px;
+  }
+
+  .category-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e8956d;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    padding-left: 4px;
+    border-left: 3px solid #e8956d;
+    padding-left: 10px;
+  }
+
+  .qa-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 10px;
+    border: 1.5px solid #eeeeee;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .qa-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    border-color: #e8c9b7;
+  }
+
+  .qa-card.open {
+    border-color: #e8956d;
+    box-shadow: 0 4px 16px rgba(232,149,109,0.12);
+  }
+
+  .qa-q {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.55;
+  }
+
+  .qa-q::before {
+    content: 'Q';
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    background: #e8956d;
+    border-radius: 5px;
+    padding: 1px 7px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .qa-a {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f0f0f0;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #3a3a3a;
+    padding-left: 32px;
+  }
+
+  .qa-a::before {
+    content: 'A. ';
+    font-weight: 700;
+    color: #e8956d;
+  }
+
+  .qa-card.open .qa-a {
+    display: block;
+  }
+
+  mark {
+    background: #fff0c0;
+    border-radius: 3px;
+    padding: 0 2px;
+  }
+
+  .no-result {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+    font-size: 15px;
+    display: none;
+  }
+
+  .no-result .emoji { font-size: 40px; display: block; margin-bottom: 12px; }
+
+  kbd {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: monospace;
+    color: #555;
+  }
+
+  .hint {
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 6px;
+  }
+
+  .expand-all-btn {
+    float: right;
+    font-size: 12px;
+    color: #e8956d;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: underline;
+    padding: 0;
+    margin-bottom: 8px;
+  }
+
+  .expand-all-btn:hover { color: #c97040; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>コトバまるく｜発表会 <span>想定Q&A集</span></h1>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="キーワードで検索（例：JWT、Stripe、XSS …）" autocomplete="off">
+    <button id="clear-btn" title="クリア">✕</button>
+  </div>
+  <div class="filter-wrap">
+    <button class="filter-btn active" data-cat="all">すべて</button>
+    <button class="filter-btn" data-cat="企画・背景">企画・背景</button>
+    <button class="filter-btn" data-cat="機能・デモ">機能・デモ</button>
+    <button class="filter-btn" data-cat="技術-全体構成">技術 全体構成</button>
+    <button class="filter-btn" data-cat="技術-認証認可">技術 認証・認可</button>
+    <button class="filter-btn" data-cat="技術-課金Stripe">技術 課金・Stripe</button>
+    <button class="filter-btn" data-cat="技術-セキュリティ">技術 セキュリティ</button>
+    <button class="filter-btn" data-cat="チーム・プロセス">チーム・プロセス</button>
+    <button class="filter-btn" data-cat="今後の展望">今後の展望</button>
+  </div>
+  <div class="hint">クリックで回答を表示 ／ <kbd>Enter</kbd> で最初の結果を開く</div>
+</header>
+
+<main>
+  <div id="result-count"></div>
+  <button class="expand-all-btn" id="expand-all">すべて展開</button>
+  <div id="qa-list"></div>
+  <div class="no-result" id="no-result">
+    <span class="emoji">🔍</span>
+    「<strong id="no-result-word"></strong>」に一致するQ&Aが見つかりませんでした
+  </div>
+</main>
+
+<script>
+const DATA = [
+  {
+    cat: "企画・背景",
+    items: [
+      { q: "なぜ夫婦向けアプリにしようと思ったのですか？", a: "夫婦喧嘩の原因トップが「伝え方」であるというデータに注目しました。カウンセリングを受けるほどではないけれど関係を改善したい、というニーズに応えられると考えたためです。" },
+      { q: "既存のLINEなどのメッセージアプリと何が違うのですか？", a: "LINEは伝えたい内容をそのまま送るツールですが、コトバまるくはAIが伝える前に表現を整えてくれます。感情的になりやすいタイミングでも、相手が受け取りやすい言葉に変換してから送れる点が違います。" },
+      { q: "ターゲットユーザーはどんな人を想定していますか？", a: "共働きで時間がない夫婦で、喧嘩を減らしたい・要望を上手く伝えたい・感謝を伝える習慣を作りたいと思っている方を想定しています。カウンセリングは大げさだけど、関係を改善したいという層です。" },
+      { q: "ユーザーにとってお金を払う理由（動機）はなんですか？", a: "無料プランは当月の履歴のみ確認できます。プレミアムプランは過去すべての履歴を振り返れるため、「夫婦のコミュニケーションの変化を記録として残したい」というニーズに応えます。関係改善の実感が続けばお金を払う価値を感じてもらえると考えています。" },
+    ]
+  },
+  {
+    cat: "機能・デモ",
+    items: [
+      { q: "AIはどうやって言葉を変換しているのですか？", a: "OpenAIのGPT-4o-miniというモデルを使っています。プロンプトで「状況はそのままに、相手が受け取りやすい表現にしてください」という指示を与えており、内容の深刻さに合わせてトーンが変わるよう工夫しています。" },
+      { q: "AIが変な変換をしてしまうことはないですか？", a: "プロンプトを調整して精度を上げていますが、AIの回答は確定的ではありません。そのため、変換結果をユーザーが確認してから送信する設計にしており、気に入らなければ送らないこともできます。" },
+      { q: "パートナー連携はどうやってするのですか？", a: "招待コードを発行してパートナーに共有する仕組みです。コードには有効期限があり、期限切れや不正なコードは拒否されます。" },
+      { q: "フリープランとプレミアムプランの違いは何ですか？", a: "フリープランは当月の履歴のみ閲覧できます。プレミアムプランは過去のすべての履歴を見ることができます。" },
+    ]
+  },
+  {
+    cat: "技術-全体構成",
+    catLabel: "技術｜全体構成",
+    items: [
+      { q: "技術スタックを選んだ理由を教えてください。", a: "バックエンドはPythonのFastAPIを使いました。書きやすく、APIドキュメントが自動生成される点が開発効率上よかったです。フロントエンドはNext.js（TypeScript）で、型安全に開発できる点を重視しました。DBはPostgreSQLで、信頼性の高いリレーショナルDBとして選択しました。" },
+      { q: "Redisは何に使っていますか？", a: "AIの変換回数制限（レートリミット）の管理に使っています。1日あたりの変換回数をRedisで管理し、上限を超えるとエラーを返します。DBより高速に読み書きできるためこの用途に適しています。" },
+      { q: "Dockerを使っている理由は何ですか？", a: "開発環境をチーム全員で揃えるためです。「自分のPCでは動くのに他の人のPCでは動かない」という問題を防げます。また、テストも自動でコンテナ内で実行できます。" },
+      { q: "フロントエンドとバックエンドはどうやって連携していますか？", a: "OpenAPI仕様（openapi.yaml）を定義して、そこからTypeScriptの型定義とAPIクライアントを自動生成しています。これにより、バックエンドのAPI仕様とフロントエンドのコードがズレないようにしています。" },
+    ]
+  },
+  {
+    cat: "技術-認証認可",
+    catLabel: "技術｜認証・認可",
+    items: [
+      { q: "ログインの仕組みを教えてください。", a: "メールアドレスとパスワードで認証し、JWT（トークン）を発行します。以降のリクエストはそのトークンを使って「誰からのリクエストか」を確認します。" },
+      { q: "JWTとは何ですか？", a: "JSON Web Tokenの略で、「このユーザーは認証済みですよ」という情報を暗号化した文字列です。ログイン後にサーバーが発行し、フロントエンドがリクエストごとに送ることで、ログイン状態を維持します。" },
+      { q: "パスワードはどのように管理していますか？", a: "パスワードはbcrypt（ビー・クリプト）というアルゴリズムでハッシュ化してDBに保存しています。元のパスワードは保存されないため、DBが漏洩しても直接パスワードは分かりません。" },
+      { q: "パスワードの強度ルールはありますか？", a: "15文字以上、英字と数字をそれぞれ1文字以上含むことを必須としています。登録時にバリデーションで弾く実装をしています。" },
+      { q: "SupabaseにもAuth機能があるのになぜ使わなかったのですか？", a: "学習目的で、JWTの発行からパスワードのハッシュ化まで自前で実装しました。Supabaseを使うと裏側の仕組みがブラックボックスになりますが、自分で実装したことで認証の仕組みを理解した状態になれました。実務でSupabaseのAuthを使う場面でも、何が起きているかわかった上で使えるのが利点だと思っています。" },
+    ]
+  },
+  {
+    cat: "技術-課金Stripe",
+    catLabel: "技術｜課金・Stripe",
+    items: [
+      { q: "Stripeを選んだ理由は何ですか？", a: "3つ理由があります。1つ目はセキュリティ面で、カード情報はStripe側で管理されるため、PCI DSSという国際的なセキュリティ基準への対応を自前でする必要がありません。2つ目は決済UIを自前で作らなくてよい点で、StripeのCheckout画面をそのまま使えるため実装コストを大幅に削減できました。3つ目はテスト環境が充実している点で、テスト用のカード番号が用意されており、本番に影響なく動作確認ができました。" },
+      { q: "課金フローを教えてください。", a: "ユーザーが登録ボタンを押すと、バックエンドがStripeにCheckoutセッションを作成してURLを返します。ユーザーはそのURLでStripeの決済画面に遷移し、カード情報を入力して決済します。決済完了後、StripeがWebhookでバックエンドに通知を送り、DBの課金状態を更新します。" },
+      { q: "Webhookとは何ですか？", a: "「何かが起きたら自動で通知する仕組み」です。今回はStripeが「決済が完了しましたよ」というイベントをバックエンドに送ってくれます。バックエンドはそれを受け取ってDBを更新します。" },
+      { q: "なぜWebhookの署名検証が必要なのですか？", a: "Webhookのエンドポイントはインターネットに公開されているため、誰でもリクエストを送れます。署名がないと、悪意のある第三者が「決済完了しました」という偽の通知を送りつけることができてしまいます。署名検証によって、本物のStripeからの通知だけを受け付けます。" },
+      { q: "課金状態の判定はどこでしていますか？", a: "is_subscription_active()という関数1つに集約しています。「StripeのステータスがActiveかつ有効期間内か」を判定する処理をここに書くことで、複数の機能で使っても判定基準がズレません。" },
+      { q: "決済が失敗した場合はどうなりますか？", a: "決済はStripe側で非同期に処理されるため、失敗してもユーザーへ直接エラーコードは返りません。StripeがWebhookで失敗イベントを送ってきますが、DBの課金ステータスは更新されないためプレミアム機能が使えない状態のままになります。その後ユーザーがプレミアム機能にアクセスしようとしたときに初めて403が返ります。" },
+    ]
+  },
+  {
+    cat: "技術-セキュリティ",
+    catLabel: "技術｜セキュリティ",
+    items: [
+      { q: "SQLインジェクション対策はしていますか？", a: "はい。バックエンドでSQLAlchemy ORMを使っているため、SQLを文字列で直接組み立てることがありません。入力値はすべてパラメータとして安全に扱われます。また、テストでSQLインジェクション文字列を送っても500エラーにならないことを確認しています。" },
+      { q: "XSS対策はどうしていますか？", a: "バックエンドはJSON APIのためHTMLを返さず、反射型XSSは発生しません。フロントエンドはNext.js（React）を使っており、JSXが自動でエスケープ処理をするため、ユーザー入力がそのままHTMLとして実行されることはありません。" },
+      { q: "セキュリティのテストはしましたか？", a: "はい。pytestを使って自動テストを実装しました。認証エンドポイントと課金エンドポイントに対して、SQLインジェクション・XSSペイロード・不正な署名などを送るテストを計26件作成し、全件パスしています。" },
+      { q: "CORS対策はしていますか？", a: "はい。バックエンドで許可するオリジン（フロントエンドのURL）を環境変数で管理しており、それ以外のオリジンからのリクエストはブロックされます。" },
+    ]
+  },
+  {
+    cat: "チーム・プロセス",
+    catLabel: "チーム・開発プロセス",
+    items: [
+      { q: "チームでの役割分担はどうしていましたか？", a: "バックエンドを2名（Shiho・まりあんぬ）、フロントエンドを1名（ゆぅたん）で担当しました。私（Shiho）は認証・認可とStripe課金まわりを担当しています。" },
+      { q: "開発で一番大変だったことは何ですか？", a: "Stripe Webhookの実装です。決済完了の通知をStripeから受け取ってDBを更新する流れが複数のシステムをまたぐため、テスト環境での動作確認に工夫が必要でした。Stripeのサンドボックス環境をチームで共有しながら進めました。" },
+      { q: "APIの仕様はどうやって共有しましたか？", a: "OpenAPI形式（YAML）でAPI仕様書を先に定義し、それをもとにフロントエンドとバックエンドを並行して開発しました。フロントエンドはYAMLから型定義とAPIクライアントを自動生成したため、認識のズレを防げました。" },
+      { q: "バージョン管理・コードレビューはしましたか？", a: "GitHubでブランチを切り、プルリクエストを出してチームメンバーにレビューしてもらう流れで進めました。" },
+    ]
+  },
+  {
+    cat: "今後の展望",
+    items: [
+      { q: "今後追加したい機能はありますか？", a: "まずは未実装の機能（プッシュ通知・解約フローなど）を整備します。その後、UIのブラッシュアップや、AIの変換精度をさらに上げることを考えています。" },
+      { q: "夫婦以外への応用は考えていますか？", a: "はい。「伝え方のすれ違いが起きやすい関係」であれば応用できると考えています。思春期の子どもとの親子関係や、親の介護をしている家族など、感情が絡みやすい場面に展開できると考えています。" },
+      { q: "スケールした場合の構成はどう変えますか？", a: "現状はローカルDockerとSupabaseで動いていますが、ユーザーが増えた場合はクラウドへの移行、DBのコネクションプーリング強化、Redisのクラスタ化などを検討します。" },
+    ]
+  },
+];
+
+let currentCat = "all";
+let expandAll = false;
+
+function highlight(text, keyword) {
+  if (!keyword) return text;
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(escaped, 'gi'), m => `<mark>${m}</mark>`);
+}
+
+function render() {
+  const keyword = document.getElementById('search').value.trim();
+  const list = document.getElementById('qa-list');
+  const noResult = document.getElementById('no-result');
+  document.getElementById('no-result-word').textContent = keyword;
+  document.getElementById('clear-btn').style.display = keyword ? 'block' : 'none';
+
+  list.innerHTML = '';
+  let total = 0;
+
+  DATA.forEach(section => {
+    if (currentCat !== 'all' && section.cat !== currentCat) return;
+
+    const filtered = section.items.filter(item => {
+      if (!keyword) return true;
+      return item.q.includes(keyword) || item.a.includes(keyword);
+    });
+
+    if (filtered.length === 0) return;
+    total += filtered.length;
+
+    const label = section.catLabel || section.cat;
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.innerHTML = `<div class="category-title">${label}</div>`;
+
+    filtered.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'qa-card' + (expandAll ? ' open' : '');
+      card.innerHTML = `
+        <div class="qa-q">${highlight(item.q, keyword)}</div>
+        <div class="qa-a">${highlight(item.a, keyword)}</div>
+      `;
+      card.addEventListener('click', () => card.classList.toggle('open'));
+      div.appendChild(card);
+    });
+
+    list.appendChild(div);
+  });
+
+  const countEl = document.getElementById('result-count');
+  countEl.innerHTML = keyword
+    ? `「${keyword}」の検索結果：<span>${total}件</span>`
+    : `全 <span>${total}件</span>`;
+
+  noResult.style.display = (total === 0) ? 'block' : 'none';
+}
+
+// 検索
+document.getElementById('search').addEventListener('input', render);
+
+// クリア
+document.getElementById('clear-btn').addEventListener('click', () => {
+  document.getElementById('search').value = '';
+  render();
+  document.getElementById('search').focus();
+});
+
+// フィルター
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    render();
+  });
+});
+
+// すべて展開/折りたたみ
+document.getElementById('expand-all').addEventListener('click', () => {
+  expandAll = !expandAll;
+  document.getElementById('expand-all').textContent = expandAll ? 'すべて折りたたむ' : 'すべて展開';
+  document.querySelectorAll('.qa-card').forEach(card => {
+    card.classList.toggle('open', expandAll);
+  });
+});
+
+// Enterキーで最初の結果を開く
+document.getElementById('search').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const first = document.querySelector('.qa-card');
+    if (first) { first.classList.add('open'); first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+});
+
+render();
+</script>
+</body>
+</html>
