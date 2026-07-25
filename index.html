@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>コトバまるく 発表会 想定Q&A集</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>コトバまるく｜発表会 <span>想定Q&A集</span></h1>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="キーワードで検索（例：JWT、Stripe、XSS …）" autocomplete="off">
+    <button id="clear-btn" title="クリア">✕</button>
+  </div>
+  <div class="filter-wrap">
+    <button class="filter-btn active" data-cat="all">すべて</button>
+    <button class="filter-btn" data-cat="企画・背景">企画・背景</button>
+    <button class="filter-btn" data-cat="機能・デモ">機能・デモ</button>
+    <button class="filter-btn" data-cat="技術-全体構成">技術 全体構成</button>
+    <button class="filter-btn" data-cat="技術-認証認可">技術 認証・認可</button>
+    <button class="filter-btn" data-cat="技術-課金Stripe">技術 課金・Stripe</button>
+    <button class="filter-btn" data-cat="技術-セキュリティ">技術 セキュリティ</button>
+    <button class="filter-btn" data-cat="チーム・プロセス">チーム・プロセス</button>
+    <button class="filter-btn" data-cat="今後の展望">今後の展望</button>
+  </div>
+  <div class="hint">クリックで回答を表示 ／ <kbd>Enter</kbd> で最初の結果を開く</div>
+</header>
+
+<main>
+  <div id="result-count"></div>
+  <button class="expand-all-btn" id="expand-all">すべて展開</button>
+  <div id="qa-list"></div>
+  <div class="no-result" id="no-result">
+    <span class="emoji">🔍</span>
+    「<strong id="no-result-word"></strong>」に一致するQ&Aが見つかりませんでした
+  </div>
+</main>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
