@@ -249,3 +249,61 @@ kbd {
 }
 
 .expand-all-btn:hover { color: #c97040; }
+
+/* ============================================================
+   スマホ表示対応（PC幅 601px 以上には影響しません）
+   ============================================================ */
+@media (max-width: 600px) {
+  /* ヘッダー：余白とタイトルを圧縮して画面占有を減らす */
+  header {
+    padding: 14px 16px;
+  }
+  header h1 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  /* 検索バー：横幅いっぱいに使い、はみ出さないようにする */
+  .search-wrap {
+    max-width: none;
+  }
+  #search {
+    font-size: 16px; /* iOSで入力時に自動ズームされないよう16px以上に */
+  }
+
+  /* カテゴリタブ：折り返さず横スクロールにする */
+  .filter-wrap {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;            /* Firefox：スクロールバー非表示 */
+    margin-top: 10px;
+    padding-bottom: 2px;
+  }
+  .filter-wrap::-webkit-scrollbar {   /* Chrome/Safari：スクロールバー非表示 */
+    display: none;
+  }
+  .filter-btn {
+    flex: 0 0 auto;                   /* 縮まず一定幅を保ち、横に並べる */
+  }
+
+  /* ヒント：小画面では控えめに */
+  .hint {
+    margin-top: 8px;
+  }
+
+  /* main：左右余白を詰めて本文の表示領域を広げる */
+  main {
+    margin: 20px auto;
+    padding: 0 16px 48px;
+  }
+
+  /* Q&Aカード：余白を詰めて読みやすく */
+  .qa-card {
+    padding: 15px 16px;
+  }
+  .qa-a {
+    padding-left: 26px;
+  }
+}
