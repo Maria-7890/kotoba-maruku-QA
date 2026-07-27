@@ -104,6 +104,15 @@ const DATA = [
       { q: "サーバーコンポーネント(Next.jsのRSC)とクライアントコンポーネント、どう使い分けていますか？", a: "フォーム入力や状態管理など対話的な処理が必要なコンポーネントにのみ\"use client\"を明示し、Client Componentとして扱っています。それ以外の静的な表示部分はデフォルトのServer Componentです。" },
       { q: "型安全性はどう担保していますか？", a: "バックエンドのOpenAPI定義(../docs/api/openapi.yaml)からopenapi-typescriptで型を自動生成しており(types/api.ts)、リクエスト/レスポンスの型やエラースキーマがバックエンドの仕様とズレないようにしています。" },
       { q: "認証トークン(JWT)はフロント側でどう保持・送信していますか？", a: "localStorageにaccess_tokenというキーで保存しています。API呼び出し時にapiFetchが自動で読み出し、Authorization: Bearer <token>ヘッダーとして送信します。ログアウトや401エラー時にはlocalStorage.removeItemでトークンを破棄します。" },
+      { q: "QAサイトに「APIクライアントを自動生成」とありますが、実際の実装は？", a: "正確には自動生成しているのは「型定義」だけです（openapi-typescript → types/api.ts）。通信部分は自作のapiFetchラッパー（ネイティブfetch）で、openapi-fetchライブラリは依存に入っていますが未使用です。" },
+      { q: "データ取得はすべてそのapiFetchラッパー経由ですか？", a: "いいえ。カスタムフック群（useHistory/useGroupStatus/useTodayMessages/useMessageForm）はapiFetch経由ですが、login/partner/本日のメッセージ/billing系の画面は生fetchを直接呼び、認証ヘッダやエラー処理を個別に書いています。統一しきれていない部分が残っています。" },
+      { q: "「型安全」といっても、APIパスとレスポンス型は結び付いていますか？", a: "apiFetch<T>()は呼び出し側が型Tを手で指定する方式で、パス文字列と型の対応はコンパイラが保証しません。仕様変更時は生成型を再生成して検知する運用です。" },
+      { q: "APIが想定外の形（500・HTML・ネットワーク断）を返したらどうなりますか？", a: "apiFetchは!res.okのときres.json()してErrorスキーマ前提でApiClientErrorに変換します。error_codeの無い応答だと汎用の「取得に失敗しました」表示になります。ネットワーク断もcatchで同じく汎用エラー表示です。" },
+      { q: "画面を素早く行き来したり再取得が重なったとき、古い応答が表示される競合はないですか？", a: "各フックはuseEffectのマウント時にfetchし、AbortControllerやクリーンアップは入れていません。通常操作では問題になりにくいですが、厳密なレース対策は今後の課題です。" },
+      { q: "localStorageのトークンを読むのに、サーバーサイドレンダリングで落ちませんか？", a: "トークンを読むのはapiFetchで、呼ぶのは\"use client\"なフック/コンポーネントのuseEffect内のみです。サーバー描画時には実行されないため、SSRでlocalStorage参照エラーにはなりません。" },
+      { q: "ページのメタデータ（タイトル・OGP・言語設定）は整備されていますか？", a: "まだで、layout.tsxのtitleがcreate-next-app既定のまま、<html lang=\"en\">も英語のままです（中身は日本語）。今後の課題です。" },
+      { q: "アクセシビリティはどこまで対応していますか？", a: "件数バッジやクリアボタンにaria-labelを付けるなど部分的対応です。体系的なフォーカス管理・コントラスト検証は未実施、prefers-reduced-motionには対応済みです。" },
+      { q: "ローカルと本番でAPI接続先はどう切り替えていますか？", a: "NEXT_PUBLIC_API_URL環境変数をベースURLにして、apiFetch・生fetchの両方で使っています。ビルド時に環境変数を差し替えるだけで切り替えられます。" },
     ]
   },
 ];
